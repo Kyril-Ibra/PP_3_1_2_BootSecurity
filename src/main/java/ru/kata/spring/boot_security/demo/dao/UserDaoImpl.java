@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import javax.persistence.EntityManager;
@@ -12,7 +13,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Component
-public class UserDaoImpl implements UserDao{
+public class UserDaoImpl implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
     public UserDaoImpl() {
@@ -54,20 +55,25 @@ public class UserDaoImpl implements UserDao{
     }
 
     @Override
-    public User findUserByUsername(String username) throws UsernameNotFoundException  {
+    @Transactional
+    public User findByUsername(String username) throws UsernameNotFoundException  {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.name = :name", User.class);
         query.setParameter("name", username);
         if (username == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return query.getSingleResult();
+        User user = query.getSingleResult();
+        user.getRoles().size();
+        return user;
     }
+
 
     public Role findRoleByRoleName(String name) {
         TypedQuery<Role> query = entityManager.createQuery("SELECT r FROM Role r WHERE r.roleName = :rolename", Role.class);
         query.setParameter("rolename", name);
         return query.getSingleResult();
     }
+
 
     public List<Role> getRoles() {
         return roleRepo.findAll();

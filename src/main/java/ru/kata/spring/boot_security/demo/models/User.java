@@ -38,7 +38,7 @@ public class User implements UserDetails {
     public void setId(int id) {
         this.id = id;
     }
-
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"roles"})
     public String getName() {
         return name;
     }
@@ -82,6 +82,7 @@ public class User implements UserDetails {
         this.password = password;
         this.roles = roles;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -49,10 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String name) {
-        User user = dao.findUserByUsername(name);
+        User user = dao.findByUsername(name);
         return user;
     }
-
     @Override
     public List<Role> getRoles() {
         return dao.getRoles();
